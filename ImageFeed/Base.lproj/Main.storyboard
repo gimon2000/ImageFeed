@@ -66,7 +66,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.1019607843" green="0.1058823529" blue="0.1333333333" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
-                                            <outlet property="dataLabel" destination="2DQ-4H-TLH" id="3I5-f8-eio"/>
+                                            <outlet property="dateLabel" destination="2DQ-4H-TLH" id="3I5-f8-eio"/>
                                             <outlet property="imageCell" destination="oar-YU-mrq" id="NeS-i4-dX1"/>
                                             <outlet property="likeButton" destination="WNO-4c-zhu" id="mpl-wm-Ntn"/>
                                         </connections>
