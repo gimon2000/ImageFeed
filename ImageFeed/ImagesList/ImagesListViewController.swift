@@ -13,6 +13,13 @@ class ImagesListViewController: UIViewController {
     
     @IBOutlet private var tableView: UITableView!
     
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale.init(identifier: "RU")
+        return formatter
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 200
@@ -22,7 +29,12 @@ class ImagesListViewController: UIViewController {
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         if indexPath.row < photosName.count {
             let imageName = photosName[indexPath.row]
-            cell.configImageCell(imageName: imageName, index: indexPath.row)
+            guard let image = UIImage(named: imageName) else {
+                return
+            }
+            let dateString = dateFormatter.string(from: Date())
+            let isLiked = indexPath.row % 2 == 0
+            cell.configImageCell(image: image, dateString: dateString, isLiked: isLiked)
         }
     }
 }
