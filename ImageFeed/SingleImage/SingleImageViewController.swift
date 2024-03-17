@@ -18,6 +18,10 @@ final class SingleImageViewController: UIViewController {
         imageView.image = image
     }
     
+    @IBAction private func didClickButtonBack(_ sender: Any) {
+        dismiss(animated: true)
+    }
+    
     func setImage (imageView: UIImage) {
         image = imageView
     }
