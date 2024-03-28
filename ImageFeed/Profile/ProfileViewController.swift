@@ -8,27 +8,67 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
-    private let avatarImageView: UIImageView = UIImageView()
-    private let nameLabel: UILabel = UILabel()
-    private let nickLabel: UILabel = UILabel()
-    private let messageLabel: UILabel = UILabel()
-    private var exitButton: UIButton?
+    
+    private let avatarImageView: UIImageView = {
+        let avatarImage = UIImage(named: "Photo")
+        let view = UIImageView()
+        view.image = avatarImage
+        return view
+    }()
+    
+    private let nameLabel: UILabel = {
+        let view = UILabel()
+        view.text = "Екатерина Новикова"
+        view.textColor = .white
+        view.font = UIFont.systemFont(ofSize: 23)
+        return view
+    }()
+    
+    private let nickLabel: UILabel = {
+        let view = UILabel()
+        view.text = "@ekaterina_nov"
+        view.textColor = UIColor(red: 174.0 / 255.0, green: 175.0 / 255.0, blue: 180.0 / 255.0, alpha: 1.0 )
+        view.font = UIFont.systemFont(ofSize: 13)
+        return view
+    }()
+    
+    private let messageLabel: UILabel = {
+        let view = UILabel()
+        view.text = "Hello, world!"
+        view.textColor = .white
+        view.font = UIFont.systemFont(ofSize: 13)
+        return view
+    }()
+    
+    private var exitButton: UIButton = {
+        let image = UIImage(named: "Exit")
+        guard let image = image else {
+            return UIButton()
+        }
+        let view = UIButton.systemButton(with: image, target: nil, action: #selector(didClickExitButton))
+        view.tintColor = .red
+        return view
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        createImageAvatar()
-        createExitButton()
-        createNameLabel()
-        createNickLabel()
-        createMessageLabel()
+        [avatarImageView,
+         nameLabel,
+         nickLabel,
+         messageLabel,
+         exitButton].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
+        addConstraintImageAvatar()
+        addConstraintExitButton()
+        addConstraintNameLabel()
+        addConstraintNickLabel()
+        addConstraintMessageLabel()
     }
     
-    private func createImageAvatar(){
-        view.addSubview(avatarImageView)
-        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        let avatarImage = UIImage(named: "Photo")
-        avatarImageView.image = avatarImage
+    private func addConstraintImageAvatar(){
         NSLayoutConstraint.activate([
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
             avatarImageView.heightAnchor.constraint(equalToConstant: 70),
@@ -37,15 +77,7 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func createExitButton(){
-        let imageExitButton = UIImage(named: "Exit")
-        exitButton = UIButton.systemButton(with: imageExitButton!, target: nil, action: #selector(didClickExitButton))
-        guard let exitButton = exitButton else {
-            return
-        }
-        view.addSubview(exitButton)
-        exitButton.translatesAutoresizingMaskIntoConstraints = false
-        exitButton.tintColor = .red
+    private func addConstraintExitButton(){
         NSLayoutConstraint.activate([
             exitButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24),
@@ -54,39 +86,21 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func createNameLabel(){
-        view.addSubview(nameLabel)
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.text = "Екатерина Новикова"
-        nameLabel.textColor = .white
-        nameLabel.font = UIFont.systemFont(ofSize: 23)
-        
+    private func addConstraintNameLabel(){
         NSLayoutConstraint.activate([
             nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             nameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8)
         ])
     }
     
-    private func createNickLabel(){
-        view.addSubview(nickLabel)
-        nickLabel.translatesAutoresizingMaskIntoConstraints = false
-        nickLabel.text = "@ekaterina_nov"
-        nickLabel.textColor = UIColor(red: 174.0 / 255.0, green: 175.0 / 255.0, blue: 180.0 / 255.0, alpha: 1.0 )
-        nickLabel.font = UIFont.systemFont(ofSize: 13)
-        
+    private func addConstraintNickLabel(){
         NSLayoutConstraint.activate([
             nickLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             nickLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8)
         ])
     }
     
-    private func createMessageLabel(){
-        view.addSubview(messageLabel)
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.text = "Hello, world!"
-        messageLabel.textColor = .white
-        messageLabel.font = UIFont.systemFont(ofSize: 13)
-        
+    private func addConstraintMessageLabel(){
         NSLayoutConstraint.activate([
             messageLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             messageLabel.topAnchor.constraint(equalTo: nickLabel.bottomAnchor, constant: 8)
@@ -94,5 +108,6 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
+        // TODO: - Добавить логику перехода по нажатию на кнопки Exit
     }
 }
