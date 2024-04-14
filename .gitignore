@@ -86,7 +86,7 @@ fastlane/test_output
 iOSInjectionProject/
 
 # Constants with token
-**/AuthToken.xcconfig
+**/Configuration.xcconfig
 
 ### Xcode ###
 

@@ -64,7 +64,9 @@ final class WebViewViewController: UIViewController {
     }
     
     private func loadAuthView(){
-        guard var urlComponents = URLComponents(string: Constants.unsplashAuthorizeURLString) else {
+        guard var urlComponents = URLComponents(
+            string: Constants.unsplashURLString + "/oauth/authorize"
+        ) else {
             print("loadAuthView urlComponents error")
             return
         }
@@ -97,12 +99,14 @@ extension WebViewViewController: WKNavigationDelegate {
     }
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
+        print("WKNavigationDelegate code url", navigationAction.request.url ?? "nil")
         if
             let url = navigationAction.request.url,
             let urlComponents = URLComponents(string: url.absoluteString),
             urlComponents.path == "/oauth/authorize/native",
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: {$0.name == "code"}) {
+            print("WKNavigationDelegate code", codeItem.value ?? "nil")
             return codeItem.value
         } else {
             return nil
