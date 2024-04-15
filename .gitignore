@@ -85,6 +85,9 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+# Constants with token
+**/Configuration.xcconfig
+
 ### Xcode ###
 
 ## Xcode 8 and earlier
