@@ -44,7 +44,6 @@
 		E0C6E6472BBC73C300FE1048 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		E0C6E6492BBC92AB00FE1048 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
 		E0C6E64F2BC06AA000FE1048 /* AuthProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProtocol.swift; sourceTree = "<group>"; };
-		E0C6E6512BC139D500FE1048 /* Configuration.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Configuration.xcconfig; sourceTree = "<group>"; };
 		E0C6E6522BC1876300FE1048 /* OAuth2Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2Service.swift; sourceTree = "<group>"; };
 		E0C6E6552BC321B500FE1048 /* URLSession+data+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+data+extension.swift"; sourceTree = "<group>"; };
 		E0C6E6582BC32C3200FE1048 /* OAuthTokenResponseBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthTokenResponseBody.swift; sourceTree = "<group>"; };
@@ -96,7 +95,6 @@
 				E08469772B91118600D5B87C /* Assets.xcassets */,
 				E08469792B91118600D5B87C /* LaunchScreen.storyboard */,
 				E084697C2B91118600D5B87C /* Info.plist */,
-				E0C6E6512BC139D500FE1048 /* Configuration.xcconfig */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
@@ -302,7 +300,6 @@
 /* Begin XCBuildConfiguration section */
 		E084697D2B91118600D5B87C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E0C6E6512BC139D500FE1048 /* Configuration.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -366,7 +363,6 @@
 		};
 		E084697E2B91118600D5B87C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E0C6E6512BC139D500FE1048 /* Configuration.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

@@ -12,14 +12,6 @@ enum Constants {
     static let accessScope = "public+read_user+write_likes"
     static let unsplashURLString = "https://unsplash.com"
     static let defaultBaseURL = URL(string: "https://api.unsplash.com/")!
-    static let accessKey = Configuration.value(for: "ACCESS_KEY")
-    static let secretKey = Configuration.value(for: "SECRET_KEY")
-}
-
-struct Configuration {
-    static func value(for key: String) -> String? {
-        guard let resultObject = Bundle.main.object(forInfoDictionaryKey: key) as? String
-        else { return nil }
-        return resultObject
-    }
+    static let accessKey = "3JXueAi0D_RVCMj8w7Fhw87MRkarn9ohTBK89Btsexo"
+    static let secretKey = "RbvSntGTK80JD24sgkLZ4gJKmByaZjspuFYDLlh-n9U"
 }
