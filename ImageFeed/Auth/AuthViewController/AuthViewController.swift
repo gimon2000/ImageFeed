@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import ProgressHUD
 
 final class AuthViewController: UIViewController {
     
@@ -45,7 +44,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
         print("AuthViewController webViewViewController")
         vc.dismiss(animated: true)
         
-        ProgressHUD.show()
+        UIBlockingProgressHUD.show()
         
         delegate?.didAuthenticate(self, code: code)
     }

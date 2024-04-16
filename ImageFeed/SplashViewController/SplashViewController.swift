@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import ProgressHUD
 
 final class SplashViewController: UIViewController {
     
@@ -76,7 +75,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
             
-            ProgressHUD.dismiss()
+            UIBlockingProgressHUD.dismiss()
             
             switch result {
             case .success(let success):
