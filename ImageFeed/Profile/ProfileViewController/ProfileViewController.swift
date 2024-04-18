@@ -9,7 +9,6 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
-    private let profileService = ProfileService()
     private let oAuth2TokenStorage = OAuth2TokenStorage()
     
     private let avatarImageView: UIImageView = {
@@ -56,14 +55,9 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        UIBlockingProgressHUD.show()
-        
-        if let token = oAuth2TokenStorage.token {
-            fetchParamProfile(token)
-        } else {
-            UIBlockingProgressHUD.dismiss()
-        }
-        
+        nameLabel.text = oAuth2TokenStorage.name
+        nickLabel.text = oAuth2TokenStorage.loginName
+        messageLabel.text = oAuth2TokenStorage.bio
         
         [avatarImageView,
          nameLabel,
@@ -121,27 +115,5 @@ final class ProfileViewController: UIViewController {
     
     @objc private func didClickExitButton(_ sender: Any) {
         // TODO: - Добавить логику перехода по нажатию на кнопки Exit
-    }
-}
-
-extension ProfileViewController {
-    
-    private func fetchParamProfile(_ token: String){
-        profileService.fetchProfile(token){[weak self] result in
-            guard let self = self else { return }
-            
-            UIBlockingProgressHUD.dismiss()
-            
-            switch result {
-            case .success(let profile):
-                print("ProfileViewController fetchParamProfile success: \(profile)")
-                nameLabel.text = profile.name
-                nickLabel.text = profile.loginName
-                messageLabel.text = profile.bio
-            case .failure(let error):
-                print("ProfileViewController fetchParamProfile failure: \(error)")
-                break
-            }
-        }
     }
 }

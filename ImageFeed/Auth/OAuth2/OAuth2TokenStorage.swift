@@ -12,6 +12,9 @@ final class OAuth2TokenStorage {
     
     private enum keys: String {
         case token
+        case name
+        case loginName
+        case bio
     }
     
     var token: String? {
@@ -21,6 +24,36 @@ final class OAuth2TokenStorage {
         
         set {
             userDefaults.set(newValue, forKey: keys.token.rawValue)
+        }
+    }
+    
+    var name: String? {
+        get {
+            userDefaults.string(forKey: keys.name.rawValue)
+        }
+        
+        set {
+            userDefaults.set(newValue, forKey: keys.name.rawValue)
+        }
+    }
+    
+    var loginName: String? {
+        get {
+            userDefaults.string(forKey: keys.loginName.rawValue)
+        }
+        
+        set {
+            userDefaults.set(newValue, forKey: keys.loginName.rawValue)
+        }
+    }
+    
+    var bio: String? {
+        get {
+            userDefaults.string(forKey: keys.bio.rawValue)
+        }
+        
+        set {
+            userDefaults.set(newValue, forKey: keys.bio.rawValue)
         }
     }
 }

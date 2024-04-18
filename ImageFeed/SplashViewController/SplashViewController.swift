@@ -11,13 +11,16 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     private let oAuth2Service = OAuth2Service.shared
+    private let profileService = ProfileService()
     private let identifierTabBarViewController = "TabBarViewController"
     private let identifierAuthView = "ShowAuthView"
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let _ = storage.token {
+        if let token = storage.token {
+            UIBlockingProgressHUD.show()
+            fetchParamProfile(token)
             switchToTabBarController()
         } else {
             print("SplashViewController viewDidAppear performSegue: \(identifierAuthView)")
@@ -67,7 +70,12 @@ extension SplashViewController: AuthViewControllerDelegate {
         dismiss(animated: true) {[weak self] in
             guard let self = self else { return }
             print("SplashViewController didAuthenticate dismiss")
-            self.fetchOAuthToken(code)
+            DispatchQueue.global(qos: .default).sync {
+                self.fetchOAuthToken(code)
+                guard let token = self.storage.token else { return }
+                UIBlockingProgressHUD.show()
+                self.fetchParamProfile(token)
+            }
         }
     }
     
@@ -83,6 +91,27 @@ extension SplashViewController: AuthViewControllerDelegate {
                 self.switchToTabBarController()
             case .failure(let error):
                 print("SplashViewController fetchOAuthToken failure", error)
+                break
+            }
+        }
+    }
+}
+
+extension SplashViewController {
+    
+    private func fetchParamProfile(_ token: String){
+        profileService.fetchProfile(token){ result in
+            
+            UIBlockingProgressHUD.dismiss()
+            
+            switch result {
+            case .success(let profile):
+                print("ProfileViewController fetchParamProfile success: \(profile)")
+                self.storage.name = profile.name
+                self.storage.loginName = profile.loginName
+                self.storage.bio = profile.bio
+            case .failure(let error):
+                print("ProfileViewController fetchParamProfile failure: \(error)")
                 break
             }
         }
