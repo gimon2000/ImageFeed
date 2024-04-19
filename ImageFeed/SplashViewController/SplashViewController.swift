@@ -11,7 +11,7 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     private let oAuth2Service = OAuth2Service.shared
-    private let profileService = ProfileService()
+    private let profileService = ProfileService.shared
     private let identifierTabBarViewController = "TabBarViewController"
     private let identifierAuthView = "ShowAuthView"
     
@@ -107,9 +107,6 @@ extension SplashViewController {
             switch result {
             case .success(let profile):
                 print("ProfileViewController fetchParamProfile success: \(profile)")
-                self.storage.name = profile.name
-                self.storage.loginName = profile.loginName
-                self.storage.bio = profile.bio
             case .failure(let error):
                 print("ProfileViewController fetchParamProfile failure: \(error)")
                 break

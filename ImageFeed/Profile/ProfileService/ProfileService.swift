@@ -9,7 +9,13 @@ import Foundation
 
 final class ProfileService {
     
+    static let shared = ProfileService()
+    
+    private init() {}
+    
     private var task: URLSessionTask?
+    
+    private(set) var profile: Profile?
     
     private func meRequest(_ token: String) -> URLRequest? {
         guard let url = URL(string: Constants.defaultBaseURLString + "me") else {
@@ -46,6 +52,7 @@ final class ProfileService {
                         name: [response.firstName, lastName].joined(separator: " "),
                         loginName: "@" + response.username,
                         bio: bio)
+                    self.profile = profile
                     print("ProfileService fetchProfile task success profile: \(profile)")
                     completion(.success(profile))
                     self.task = nil

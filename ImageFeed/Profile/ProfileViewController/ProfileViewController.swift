@@ -9,7 +9,7 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
-    private let oAuth2TokenStorage = OAuth2TokenStorage()
+    private var profileService: ProfileService?
     
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
@@ -55,9 +55,9 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        nameLabel.text = oAuth2TokenStorage.name
-        nickLabel.text = oAuth2TokenStorage.loginName
-        messageLabel.text = oAuth2TokenStorage.bio
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(profile: profile)
+        }
         
         [avatarImageView,
          nameLabel,
@@ -111,6 +111,12 @@ final class ProfileViewController: UIViewController {
             messageLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             messageLabel.topAnchor.constraint(equalTo: nickLabel.bottomAnchor, constant: 8)
         ])
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        nickLabel.text = profile.loginName
+        messageLabel.text = profile.bio
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
