@@ -107,8 +107,23 @@ extension SplashViewController {
             switch result {
             case .success(let profile):
                 print("ProfileViewController fetchParamProfile success: \(profile)")
+                self.fetchAvatarProfile(token: token, username: profile.username)
             case .failure(let error):
                 print("ProfileViewController fetchParamProfile failure: \(error)")
+                break
+            }
+        }
+    }
+}
+
+extension SplashViewController {
+    private func fetchAvatarProfile(token: String, username: String) {
+        ProfileImageService.shared.fetchProfileImageURL(token: token, username: username) { result in
+            switch result {
+            case .success(let avatarURL):
+                print("SplashViewController fetchAvatarProfile avatarURL: \(avatarURL ?? "nil")")
+            case .failure(let error):
+                print("SplashViewController fetchAvatarProfile failure: \(error)")
                 break
             }
         }

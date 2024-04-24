@@ -10,6 +10,7 @@ import UIKit
 final class ProfileViewController: UIViewController {
     
     private var profileService: ProfileService?
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
@@ -72,6 +73,16 @@ final class ProfileViewController: UIViewController {
         addConstraintNameLabel()
         addConstraintNickLabel()
         addConstraintMessageLabel()
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main) {
+                [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
     }
     
     private func addConstraintImageAvatar(){
@@ -117,6 +128,14 @@ final class ProfileViewController: UIViewController {
         nameLabel.text = profile.name
         nickLabel.text = profile.loginName
         messageLabel.text = profile.bio
+    }
+    
+    private func updateAvatar() {
+        guard 
+            let avatarURLString = ProfileImageService.shared.avatarURL,
+              let url = URL(string: avatarURLString)
+        else { return }
+        // TODO: Обновить аватар, используя Kingfisher
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
