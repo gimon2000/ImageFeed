@@ -38,29 +38,20 @@ final class ProfileService {
             return
         }
         
-        let task = URLSession.shared.data(for: urlRequest){ result in
+        let task = URLSession.shared.objectTask(for: urlRequest){ (result: Result<ProfileResult, Error>) in
             switch result {
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let response = try decoder.decode(ProfileResult.self, from: data)
-                    let lastName = response.lastName ?? ""
-                    let bio = response.bio ?? ""
-                    let profile = Profile(
-                        username: response.username,
-                        name: [response.firstName, lastName].joined(separator: " "),
-                        loginName: "@" + response.username,
-                        bio: bio)
-                    self.profile = profile
-                    print("ProfileService fetchProfile task success profile: \(profile)")
-                    completion(.success(profile))
-                    self.task = nil
-                } catch {
-                    print("ProfileService fetchProfile catch: \(String(data: data, encoding: .utf8) ?? "nil")")
-                    completion(.failure(error))
-                    self.task = nil
-                }
+            case .success(let response):
+                let lastName = response.lastName ?? ""
+                let bio = response.bio ?? ""
+                let profile = Profile(
+                    username: response.username,
+                    name: [response.firstName, lastName].joined(separator: " "),
+                    loginName: "@" + response.username,
+                    bio: bio)
+                self.profile = profile
+                print("ProfileService fetchProfile task success profile: \(profile)")
+                completion(.success(profile))
+                self.task = nil
             case .failure(let error):
                 print("ProfileService fetchProfile failure: \(error)")
                 completion(.failure(error))

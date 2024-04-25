@@ -57,24 +57,14 @@ final class OAuth2Service {
             return
         }
         
-        let task = URLSession.shared.data(for: urlRequest){ result in
+        let task = URLSession.shared.objectTask(for: urlRequest){ (result: Result<OAuthTokenResponseBody, Error>) in
             switch result {
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    self.oAuth2TokenStorage.token = response.accessToken
-                    print("fetchOAuthToken success response: \(response)")
-                    completion(.success(response.accessToken))
-                    self.task = nil
-                    self.lastCode = nil
-                } catch {
-                    print("fetchOAuthToken catch: \(String(data: data, encoding: .utf8) ?? "nil")")
-                    completion(.failure(error))
-                    self.task = nil
-                    self.lastCode = nil
-                }
+            case .success(let response):
+                self.oAuth2TokenStorage.token = response.accessToken
+                print("fetchOAuthToken success response: \(response)")
+                completion(.success(response.accessToken))
+                self.task = nil
+                self.lastCode = nil
             case .failure(let error):
                 print("fetchOAuthToken failure: \(error)")
                 completion(.failure(error))

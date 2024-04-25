@@ -38,28 +38,19 @@ final class ProfileImageService {
             return
         }
         
-        let task = URLSession.shared.data(for: urlRequest) { result in
+        let task = URLSession.shared.objectTask(for: urlRequest) { (result: Result<UserResult, Error>) in
             switch result {
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let response = try decoder.decode(UserResult.self, from: data)
-                    let avatarURL = response.profileImage.small
-                    self.avatarURL = avatarURL
-                    print("ProfileImageService fetchProfileImageURL success avatarURL: \(avatarURL)")
-                    completion(.success(avatarURL))
-                    NotificationCenter.default.post(
-                        name: ProfileImageService.didChangeNotification,
-                        object: self,
-                        userInfo: ["URL": avatarURL]
-                    )
-                    self.task = nil
-                } catch {
-                    print("ProfileImageService fetchProfileImageURL catch: \(String(data: data, encoding: .utf8) ?? "nil")")
-                    completion(.failure(error))
-                    self.task = nil
-                }
+            case .success(let response):
+                let avatarURL = response.profileImage.small
+                self.avatarURL = avatarURL
+                print("ProfileImageService fetchProfileImageURL success avatarURL: \(avatarURL)")
+                completion(.success(avatarURL))
+                NotificationCenter.default.post(
+                    name: ProfileImageService.didChangeNotification,
+                    object: self,
+                    userInfo: ["URL": avatarURL]
+                )
+                self.task = nil
             case .failure(let error):
                 print("ProfileImageService fetchProfileImageURL failure: \(error)")
                 completion(.failure(error))
