@@ -14,9 +14,21 @@ final class SplashViewController: UIViewController {
     private let profileService = ProfileService.shared
     private let identifierTabBarViewController = "TabBarViewController"
     private let identifierAuthView = "ShowAuthView"
+    private var authViewController = AuthViewController()
+    
+    private let logoImageView: UIImageView = {
+        let logoImage = UIImage(named: "SplashScreen")
+        let view = UIImageView()
+        view.image = logoImage
+        return view
+    }()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logoImageView)
+        addConstraintLogoImageView()
         
         if let token = storage.token {
             UIBlockingProgressHUD.show()
@@ -24,7 +36,9 @@ final class SplashViewController: UIViewController {
             switchToTabBarController()
         } else {
             print("SplashViewController viewDidAppear performSegue: \(identifierAuthView)")
-            performSegue(withIdentifier: identifierAuthView, sender: nil)
+            authViewController.delegate = self
+            authViewController.modalPresentationStyle = .fullScreen
+            present(authViewController, animated: true)
         }
     }
     
@@ -46,22 +60,12 @@ final class SplashViewController: UIViewController {
         print("switchToTabBarController tabBarController: \(tabBarController.children)")
         window.rootViewController = tabBarController
     }
-}
-
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == identifierAuthView {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let authViewController = navigationController.viewControllers[0] as? AuthViewController
-            else {
-                fatalError("SplashViewController prepare failed to prepare for \(identifierAuthView)")
-            }
-            print("SplashViewController prepare segue.identifier: \(identifierAuthView)")
-            authViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    
+    private func addConstraintLogoImageView(){
+        NSLayoutConstraint.activate([
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
 
