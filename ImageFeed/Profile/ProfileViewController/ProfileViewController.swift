@@ -12,10 +12,12 @@ final class ProfileViewController: UIViewController {
     
     private var profileService: ProfileService?
     private var profileImageServiceObserver: NSObjectProtocol?
+    private let oAuth2TokenStorage = OAuth2TokenStorage()
     
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
         let view = UIImageView()
+        view.backgroundColor = .ypBlack
         view.image = avatarImage
         return view
     }()
@@ -137,10 +139,13 @@ final class ProfileViewController: UIViewController {
             let url = URL(string: avatarURLString)
         else { return }
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
-        avatarImageView.kf.setImage(with: url, options: [.processor(processor)])
+        avatarImageView.kf.setImage(
+            with: url,
+            options: [.processor(processor)])
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
         // TODO: - Добавить логику перехода по нажатию на кнопки Exit
+        oAuth2TokenStorage.removeToken()
     }
 }
