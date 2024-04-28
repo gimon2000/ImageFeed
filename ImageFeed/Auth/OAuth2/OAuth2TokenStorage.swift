@@ -6,24 +6,27 @@
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
-    private let userDefaults = UserDefaults.standard
     
     private enum keys: String {
-        case token
-        case name
-        case loginName
-        case bio
+        case tokenUnsplash
     }
     
     var token: String? {
         get {
-            userDefaults.string(forKey: keys.token.rawValue)
+            KeychainWrapper.standard.string(forKey: keys.tokenUnsplash.rawValue)
         }
         
         set {
-            userDefaults.set(newValue, forKey: keys.token.rawValue)
+            if let newTokenUnsplash = newValue {
+                let isSuccess = KeychainWrapper.standard.set(newTokenUnsplash, forKey: keys.tokenUnsplash.rawValue)
+                guard isSuccess else {
+                    print("OAuth2TokenStorage token error set isSuccess: \(isSuccess)")
+                    return
+                }
+            }
         }
     }
 }
