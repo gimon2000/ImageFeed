@@ -13,8 +13,8 @@ final class SplashViewController: UIViewController {
     private let oAuth2Service = OAuth2Service.shared
     private let profileService = ProfileService.shared
     private let identifierTabBarViewController = "TabBarViewController"
-    private let identifierAuthView = "ShowAuthView"
-    private var authViewController = AuthViewController()
+//    private let identifierAuthView = "ShowAuthView"
+    //    private let authViewController = AuthViewController()
     
     private let logoImageView: UIImageView = {
         let logoImage = UIImage(named: "SplashScreen")
@@ -35,10 +35,27 @@ final class SplashViewController: UIViewController {
             fetchParamProfile(token)
             switchToTabBarController()
         } else {
-            print("SplashViewController viewDidAppear performSegue: \(identifierAuthView)")
+            print("SplashViewController viewDidAppear performSegue: UINavigationController")
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            guard let viewController: UINavigationController = storyboard.instantiateViewController(withIdentifier: "UINavigationController") as? UINavigationController,
+                  let authViewController = viewController.viewControllers[0] as? AuthViewController else {
+                assertionFailure("SplashViewController UINavigationController instantiateViewController")
+                return
+            }
+            print("SplashViewController viewDidAppear viewController.viewControllers: \(viewController.viewControllers)")
             authViewController.delegate = self
-            authViewController.modalPresentationStyle = .fullScreen
-            present(authViewController, animated: true)
+            viewController.modalPresentationStyle = .fullScreen
+            present(viewController, animated: true)
+//            print("SplashViewController viewDidAppear performSegue: AuthViewController")
+//            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+//            guard let viewController: AuthViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController")
+//                    as? AuthViewController else {
+//                assertionFailure("SplashViewController AuthViewController instantiateViewController")
+//                return
+//            }
+//            viewController.delegate = self
+//            viewController.modalPresentationStyle = .fullScreen
+//            present(viewController, animated: true)
         }
     }
     
@@ -70,35 +87,37 @@ final class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController, code: String) {
+    func didAuthenticate(_ vc: AuthViewController) {
         dismiss(animated: true) {[weak self] in
             guard let self = self else { return }
             print("SplashViewController didAuthenticate dismiss")
+            switchToTabBarController()
+            UIBlockingProgressHUD.show()
             DispatchQueue.global(qos: .default).sync {
-                self.fetchOAuthToken(code)
+                //                self.fetchOAuthToken(code)
                 guard let token = self.storage.token else { return }
-                UIBlockingProgressHUD.show()
+                //                UIBlockingProgressHUD.show()
                 self.fetchParamProfile(token)
             }
         }
     }
     
-    private func fetchOAuthToken(_ code: String) {
-        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
-            guard let self = self else { return }
-            
-            UIBlockingProgressHUD.dismiss()
-            
-            switch result {
-            case .success(let success):
-                print("SplashViewController fetchOAuthToken success: \(success)")
-                self.switchToTabBarController()
-            case .failure(let error):
-                print("SplashViewController fetchOAuthToken failure", error)
-                break
-            }
-        }
-    }
+    //    private func fetchOAuthToken(_ code: String) {
+    //        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
+    //            guard let self = self else { return }
+    //
+    //            UIBlockingProgressHUD.dismiss()
+    //
+    //            switch result {
+    //            case .success(let success):
+    //                print("SplashViewController fetchOAuthToken success: \(success)")
+    //                self.switchToTabBarController()
+    //            case .failure(let error):
+    //                print("SplashViewController fetchOAuthToken failure", error)
+    //                break
+    //            }
+    //        }
+    //    }
 }
 
 extension SplashViewController {

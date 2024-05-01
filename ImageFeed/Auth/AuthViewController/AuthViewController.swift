@@ -26,6 +26,7 @@ final class AuthViewController: UIViewController {
             }
             print("AuthViewController prepare segue.identifier: \(identifierShowWebView)")
             webViewViewController.delegate = self
+//            webViewViewController.modalPresentationStyle = .fullScreen
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -45,9 +46,32 @@ extension AuthViewController: WebViewViewControllerDelegate {
         vc.dismiss(animated: true)
         
         UIBlockingProgressHUD.show()
-        
-        delegate?.didAuthenticate(self, code: code)
+        print("AuthViewController webViewViewController UIBlockingProgressHUD.show()")
+        fetchOAuthToken(code)
     }
+    
+    private func fetchOAuthToken(_ code: String) {
+        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
+            guard let self = self else {
+                print("AuthViewController fetchOAuthToken self return")
+                return
+            }
+            
+            UIBlockingProgressHUD.dismiss()
+            print("AuthViewController fetchOAuthToken UIBlockingProgressHUD.dismiss()")
+            switch result {
+            case .success(let success):
+                print("SplashViewController fetchOAuthToken success: \(success)")
+                delegate?.didAuthenticate(self)
+//                self.switchToTabBarController()
+            case .failure(let error):
+                print("SplashViewController fetchOAuthToken failure", error)
+                self.present(AlertPresenter.alertError, animated: true, completion: nil)
+                break
+            }
+        }
+    }
+
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         dismiss(animated: true)

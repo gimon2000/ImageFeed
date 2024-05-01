@@ -66,7 +66,6 @@ extension URLSession {
             case .failure(let error):
                 print("URLSession objectTask failure: \(error)")
                 completion(.failure(error))
-                completion(.failure(error))
             }
         }
         return task

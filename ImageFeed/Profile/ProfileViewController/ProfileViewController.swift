@@ -138,6 +138,9 @@ final class ProfileViewController: UIViewController {
             let avatarURLString = ProfileImageService.shared.avatarURL,
             let url = URL(string: avatarURLString)
         else { return }
+        let cache = ImageCache.default
+        cache.clearMemoryCache()
+        cache.clearDiskCache()
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
         avatarImageView.kf.setImage(
             with: url,
