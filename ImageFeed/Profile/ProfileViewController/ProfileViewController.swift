@@ -17,7 +17,6 @@ final class ProfileViewController: UIViewController {
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
         let view = UIImageView()
-        view.backgroundColor = .ypBlack
         view.image = avatarImage
         return view
     }()

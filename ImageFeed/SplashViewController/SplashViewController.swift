@@ -13,8 +13,6 @@ final class SplashViewController: UIViewController {
     private let oAuth2Service = OAuth2Service.shared
     private let profileService = ProfileService.shared
     private let identifierTabBarViewController = "TabBarViewController"
-//    private let identifierAuthView = "ShowAuthView"
-    //    private let authViewController = AuthViewController()
     
     private let logoImageView: UIImageView = {
         let logoImage = UIImage(named: "SplashScreen")
@@ -46,16 +44,6 @@ final class SplashViewController: UIViewController {
             authViewController.delegate = self
             viewController.modalPresentationStyle = .fullScreen
             present(viewController, animated: true)
-//            print("SplashViewController viewDidAppear performSegue: AuthViewController")
-//            let storyboard = UIStoryboard(name: "Main", bundle: .main)
-//            guard let viewController: AuthViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController")
-//                    as? AuthViewController else {
-//                assertionFailure("SplashViewController AuthViewController instantiateViewController")
-//                return
-//            }
-//            viewController.delegate = self
-//            viewController.modalPresentationStyle = .fullScreen
-//            present(viewController, animated: true)
         }
     }
     
@@ -88,36 +76,16 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
-        dismiss(animated: true) {[weak self] in
+        vc.dismiss(animated: true) {[weak self] in
             guard let self = self else { return }
             print("SplashViewController didAuthenticate dismiss")
             switchToTabBarController()
             UIBlockingProgressHUD.show()
-            DispatchQueue.global(qos: .default).sync {
-                //                self.fetchOAuthToken(code)
-                guard let token = self.storage.token else { return }
-                //                UIBlockingProgressHUD.show()
-                self.fetchParamProfile(token)
-            }
+            guard let token = storage.token else { return }
+            fetchParamProfile(token)
+            
         }
     }
-    
-    //    private func fetchOAuthToken(_ code: String) {
-    //        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
-    //            guard let self = self else { return }
-    //
-    //            UIBlockingProgressHUD.dismiss()
-    //
-    //            switch result {
-    //            case .success(let success):
-    //                print("SplashViewController fetchOAuthToken success: \(success)")
-    //                self.switchToTabBarController()
-    //            case .failure(let error):
-    //                print("SplashViewController fetchOAuthToken failure", error)
-    //                break
-    //            }
-    //        }
-    //    }
 }
 
 extension SplashViewController {
