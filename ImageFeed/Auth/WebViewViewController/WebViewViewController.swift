@@ -10,12 +10,12 @@ import WebKit
 
 final class WebViewViewController: UIViewController {
     
-    private var estimatedProgressObservation: NSKeyValueObservation?
-    
     weak var delegate: WebViewViewControllerDelegate?
     
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
+    
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,7 @@ final class WebViewViewController: UIViewController {
     }
     
     private func updateProgress(){
-        progressView.progress = Float(webView.estimatedProgress)
+        progressView.setProgress(Float(webView.estimatedProgress), animated: true)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
     }
     

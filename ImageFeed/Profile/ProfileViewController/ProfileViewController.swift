@@ -10,7 +10,7 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    private var profileService: ProfileService?
+    private var profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     private let oAuth2TokenStorage = OAuth2TokenStorage()
     
@@ -58,7 +58,8 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let profile = ProfileService.shared.profile {
+        view.backgroundColor = .ypBlack
+        if let profile = profileService.profile {
             updateProfileDetails(profile: profile)
         }
         

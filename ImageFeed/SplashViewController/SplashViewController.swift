@@ -24,36 +24,24 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        view.backgroundColor = .ypBlack
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoImageView)
         addConstraintLogoImageView()
         
         if let token = storage.token {
+            print("SplashViewController viewDidAppear storage.token: \(token)")
             UIBlockingProgressHUD.show()
             fetchParamProfile(token)
-            switchToTabBarController()
         } else {
-            print("SplashViewController viewDidAppear performSegue: UINavigationController")
-            let storyboard = UIStoryboard(name: "Main", bundle: .main)
-            guard let viewController: UINavigationController = storyboard.instantiateViewController(withIdentifier: "UINavigationController") as? UINavigationController,
-                  let authViewController = viewController.viewControllers[0] as? AuthViewController else {
-                assertionFailure("SplashViewController UINavigationController instantiateViewController")
-                return
-            }
-            print("SplashViewController viewDidAppear viewController.viewControllers: \(viewController.viewControllers)")
-            authViewController.delegate = self
-            viewController.modalPresentationStyle = .fullScreen
-            present(viewController, animated: true)
+            print("SplashViewController viewDidAppear storage.token: nil")
+            switchToAuthFlow()
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
     }
     
     private func switchToTabBarController() {
@@ -72,6 +60,20 @@ final class SplashViewController: UIViewController {
             logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
+    
+    private func switchToAuthFlow(){
+        print("SplashViewController viewDidAppear performSegue: UINavigationController")
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let viewController: UINavigationController = storyboard.instantiateViewController(withIdentifier: "UINavigationController") as? UINavigationController,
+              let authViewController = viewController.viewControllers[0] as? AuthViewController else {
+            assertionFailure("SplashViewController UINavigationController instantiateViewController")
+            return
+        }
+        print("SplashViewController viewDidAppear viewController.viewControllers: \(viewController.viewControllers)")
+        authViewController.delegate = self
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
+    }
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
@@ -79,11 +81,9 @@ extension SplashViewController: AuthViewControllerDelegate {
         vc.dismiss(animated: true) {[weak self] in
             guard let self = self else { return }
             print("SplashViewController didAuthenticate dismiss")
-            switchToTabBarController()
             UIBlockingProgressHUD.show()
             guard let token = storage.token else { return }
             fetchParamProfile(token)
-            
         }
     }
 }
@@ -91,13 +91,17 @@ extension SplashViewController: AuthViewControllerDelegate {
 extension SplashViewController {
     
     private func fetchParamProfile(_ token: String){
-        profileService.fetchProfile(token){ result in
-            
+        profileService.fetchProfile(token){[weak self] result in
+            guard let self = self else {
+                print("SplashViewController fetchParamProfile self: nil")
+                return
+            }
             UIBlockingProgressHUD.dismiss()
             
             switch result {
             case .success(let profile):
                 print("ProfileViewController fetchParamProfile success: \(profile)")
+                self.switchToTabBarController()
                 self.fetchAvatarProfile(token: token, username: profile.username)
             case .failure(let error):
                 print("ProfileViewController fetchParamProfile failure: \(error)")
