@@ -42,8 +42,31 @@ final class AuthViewController: UIViewController {
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         print("AuthViewController webViewViewController")
-        vc.dismiss(animated: true)
-        delegate?.didAuthenticate(self, code: code)
+        
+        UIBlockingProgressHUD.show()
+        print("AuthViewController webViewViewController UIBlockingProgressHUD.show()")
+        fetchOAuthToken(code, vc: vc)
+    }
+    
+    private func fetchOAuthToken(_ code: String, vc: WebViewViewController) {
+        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
+            guard let self = self else {
+                print("AuthViewController fetchOAuthToken self return")
+                return
+            }
+            vc.navigationController?.popViewController(animated: true)
+            UIBlockingProgressHUD.dismiss()
+            print("AuthViewController fetchOAuthToken UIBlockingProgressHUD.dismiss()")
+            switch result {
+            case .success(let success):
+                print("SplashViewController fetchOAuthToken success: \(success)")
+                delegate?.didAuthenticate(self)
+            case .failure(let error):
+                print("SplashViewController fetchOAuthToken failure", error)
+                present(AlertPresenter.alertError, animated: true )
+                break
+            }
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {

@@ -11,6 +11,8 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     private let oAuth2TokenStorage = OAuth2TokenStorage()
+    private var task: URLSessionTask?
+    private var lastCode: String?
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(
@@ -39,30 +41,42 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void ) {
-        guard let urlRequest = makeOAuthTokenRequest(code: code) else {
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            print("fetchOAuthToken lastCode = code: \(code)")
+            completion(.failure(NetworkError.invalidRequest))
             return
         }
         
-        let task = URLSession.shared.data(for: urlRequest){ result in
+        task?.cancel()
+        
+        lastCode = code
+        
+        guard let urlRequest = makeOAuthTokenRequest(code: code) else {
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        
+        let task = URLSession.shared.objectTask(for: urlRequest){[weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else {
+                print("OAuth2Service fetchOAuthToken URLSession.shared.objectTask self: nil")
+                return
+            }
             switch result {
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    self.oAuth2TokenStorage.token = response.accessToken
-                    print("fetchOAuthToken success response: \(response)")
-                    completion(.success(response.accessToken))
-                } catch {
-                    print("fetchOAuthToken catch: \(String(data: data, encoding: .utf8) ?? "nil")")
-                    completion(.failure(error))
-                }
+            case .success(let response):
+                self.oAuth2TokenStorage.token = response.accessToken
+                print("fetchOAuthToken success response: \(response)")
+                completion(.success(response.accessToken))
+                self.task = nil
+                self.lastCode = nil
             case .failure(let error):
                 print("fetchOAuthToken failure: \(error)")
                 completion(.failure(error))
+                self.task = nil
+                self.lastCode = nil
             }
         }
-        
+        self.task = task
         task.resume()
     }
 }

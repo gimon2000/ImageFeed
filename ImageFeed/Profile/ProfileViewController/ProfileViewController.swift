@@ -6,8 +6,13 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
+    
+    private var profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    private let oAuth2TokenStorage = OAuth2TokenStorage()
     
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
@@ -53,6 +58,11 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .ypBlack
+        if let profile = profileService.profile {
+            updateProfileDetails(profile: profile)
+        }
+        
         [avatarImageView,
          nameLabel,
          nickLabel,
@@ -66,6 +76,16 @@ final class ProfileViewController: UIViewController {
         addConstraintNameLabel()
         addConstraintNickLabel()
         addConstraintMessageLabel()
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main) {
+                [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
     }
     
     private func addConstraintImageAvatar(){
@@ -107,7 +127,28 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        nickLabel.text = profile.loginName
+        messageLabel.text = profile.bio
+    }
+    
+    private func updateAvatar() {
+        guard
+            let avatarURLString = ProfileImageService.shared.avatarURL,
+            let url = URL(string: avatarURLString)
+        else { return }
+        let cache = ImageCache.default
+        cache.clearMemoryCache()
+        cache.clearDiskCache()
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarImageView.kf.setImage(
+            with: url,
+            options: [.processor(processor)])
+    }
+    
     @objc private func didClickExitButton(_ sender: Any) {
         // TODO: - Добавить логику перехода по нажатию на кнопки Exit
+        oAuth2TokenStorage.removeToken()
     }
 }

@@ -11,27 +11,37 @@ final class SplashViewController: UIViewController {
     
     private let storage = OAuth2TokenStorage()
     private let oAuth2Service = OAuth2Service.shared
+    private let profileService = ProfileService.shared
     private let identifierTabBarViewController = "TabBarViewController"
-    private let identifierAuthView = "ShowAuthView"
+    
+    private let logoImageView: UIImageView = {
+        let logoImage = UIImage(named: "SplashScreen")
+        let view = UIImageView()
+        view.image = logoImage
+        return view
+    }()
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let _ = storage.token {
-            switchToTabBarController()
+        view.backgroundColor = .ypBlack
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logoImageView)
+        addConstraintLogoImageView()
+        
+        if let token = storage.token {
+            print("SplashViewController viewDidAppear storage.token: \(token)")
+            UIBlockingProgressHUD.show()
+            fetchParamProfile(token)
         } else {
-            print("SplashViewController viewDidAppear performSegue: \(identifierAuthView)")
-            performSegue(withIdentifier: identifierAuthView, sender: nil)
+            print("SplashViewController viewDidAppear storage.token: nil")
+            switchToAuthFlow()
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
     }
     
     private func switchToTabBarController() {
@@ -43,43 +53,72 @@ final class SplashViewController: UIViewController {
         print("switchToTabBarController tabBarController: \(tabBarController.children)")
         window.rootViewController = tabBarController
     }
-}
-
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == identifierAuthView {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let authViewController = navigationController.viewControllers[0] as? AuthViewController
-            else {
-                fatalError("SplashViewController prepare failed to prepare for \(identifierAuthView)")
-            }
-            print("SplashViewController prepare segue.identifier: \(identifierAuthView)")
-            authViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
+    
+    private func addConstraintLogoImageView(){
+        NSLayoutConstraint.activate([
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
+    private func switchToAuthFlow(){
+        print("SplashViewController viewDidAppear performSegue: UINavigationController")
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let viewController: UINavigationController = storyboard.instantiateViewController(withIdentifier: "UINavigationController") as? UINavigationController,
+              let authViewController = viewController.viewControllers[0] as? AuthViewController else {
+            assertionFailure("SplashViewController UINavigationController instantiateViewController")
+            return
         }
+        print("SplashViewController viewDidAppear viewController.viewControllers: \(viewController.viewControllers)")
+        authViewController.delegate = self
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
     }
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController, code: String) {
-        dismiss(animated: true) {[weak self] in
+    func didAuthenticate(_ vc: AuthViewController) {
+        vc.dismiss(animated: true) {[weak self] in
             guard let self = self else { return }
             print("SplashViewController didAuthenticate dismiss")
-            self.fetchOAuthToken(code)
+            UIBlockingProgressHUD.show()
+            guard let token = storage.token else { return }
+            fetchParamProfile(token)
         }
     }
+}
+
+extension SplashViewController {
     
-    private func fetchOAuthToken(_ code: String) {
-        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
-            guard let self = self else { return }
+    private func fetchParamProfile(_ token: String){
+        profileService.fetchProfile(token){[weak self] result in
+            guard let self = self else {
+                print("SplashViewController fetchParamProfile self: nil")
+                return
+            }
+            UIBlockingProgressHUD.dismiss()
+            
             switch result {
-            case .success(let success):
-                print("SplashViewController fetchOAuthToken success: \(success)")
+            case .success(let profile):
+                print("ProfileViewController fetchParamProfile success: \(profile)")
                 self.switchToTabBarController()
+                self.fetchAvatarProfile(token: token, username: profile.username)
             case .failure(let error):
-                print("SplashViewController fetchOAuthToken failure", error)
+                print("ProfileViewController fetchParamProfile failure: \(error)")
+                break
+            }
+        }
+    }
+}
+
+extension SplashViewController {
+    private func fetchAvatarProfile(token: String, username: String) {
+        ProfileImageService.shared.fetchProfileImageURL(token: token, username: username) { result in
+            switch result {
+            case .success(let avatarURL):
+                print("SplashViewController fetchAvatarProfile avatarURL: \(avatarURL ?? "nil")")
+            case .failure(let error):
+                print("SplashViewController fetchAvatarProfile failure: \(error)")
                 break
             }
         }
