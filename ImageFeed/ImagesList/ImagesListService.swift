@@ -28,7 +28,6 @@ final class ImagesListService {
         
         guard let urlRequest = photosRequest(page: nextPage) else {
             print("ImagesListService fetchPhotosNextPage urlRequest nil")
-            //            completion(.failure(NetworkError.invalidRequest))
             return
         }
         
@@ -64,10 +63,8 @@ final class ImagesListService {
                         object: self
                     )
                 }
-                //                completion(.success(photos))
             case .failure(let error):
                 print("ImagesListService fetchPhotosNextPage result failure: \(error)")
-                //                completion(.failure(error))
                 self.task = nil
             }
         }
