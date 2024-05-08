@@ -39,26 +39,30 @@ final class ImagesListService {
             }
             switch result {
             case .success(let response):
-                var photos: [Photo] = []
+                var photosResponse: [Photo] = []
                 response.forEach { photoResponse in
                     let photo: Photo = Photo(
                         id: photoResponse.id,
                         size: CGSize(
                             width: photoResponse.width,
                             height: photoResponse.height),
-                        createdAt: photoResponse.createdAt,
+                        createdAt: self.getDateFromString(dateString: photoResponse.createdAt),
                         welcomeDescription: photoResponse.description,
                         thumbImageURL: photoResponse.urls.thumb,
                         largeImageURL: photoResponse.urls.regular,
                         isLiked: photoResponse.likedByUser
                     )
-                    photos.append(photo)
+                    photosResponse.append(photo)
                 }
-                print("ImagesListService fetchPhotosNextPage result success photos: \(photos)")
-                DispatchQueue.main.sync {
-                    self.photos += photos
+                print("ImagesListService fetchPhotosNextPage result success photos: \(photosResponse)")
+                DispatchQueue.main.async {
+                    self.photos += photosResponse
                     self.lastLoadedPage = nextPage
-                    ImagesListService.didChangeNotification
+                    self.task = nil
+                    NotificationCenter.default.post(
+                        name: ImagesListService.didChangeNotification,
+                        object: self
+                    )
                 }
                 //                completion(.success(photos))
             case .failure(let error):
@@ -73,13 +77,23 @@ final class ImagesListService {
     
     // MARK: - Private methods
     private func photosRequest(page: Int) -> URLRequest? {
-        guard let url = URL(string: Constants.defaultBaseURLString + "/photos?page=\(page)") else {
+        guard let url = URL(string: Constants.defaultBaseURLString + "photos?page=\(page)"),
+              let token = OAuth2TokenStorage().token else {
             print("ImagesListService photosRequest url nil")
             return nil
         }
-        let urlRequest = URLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         print("ImagesListService photosRequest urlRequest: \(urlRequest)")
         return urlRequest
     }
     
+    private func getDateFromString(dateString: String?) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        guard let dateString = dateString else {
+            return nil
+        }
+        return formatter.date(from: dateString)
+    }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 struct PhotoResult: Codable {
     let id: String
-    let createdAt: Date?
+    let createdAt: String?
     let width, height: Double
     let likedByUser: Bool
     let description: String?
