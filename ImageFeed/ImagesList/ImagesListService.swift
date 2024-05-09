@@ -48,7 +48,7 @@ final class ImagesListService {
                         createdAt: self.getDateFromString(dateString: photoResponse.createdAt),
                         welcomeDescription: photoResponse.description,
                         thumbImageURL: photoResponse.urls.thumb,
-                        largeImageURL: photoResponse.urls.regular,
+                        largeImageURL: photoResponse.urls.full,
                         isLiked: photoResponse.likedByUser
                     )
                     photosResponse.append(photo)
@@ -72,6 +72,35 @@ final class ImagesListService {
         task.resume()
     }
     
+    func changeLike(index: Int, _ completion: @escaping (Result<Bool, Error>) -> Void){
+        guard var urlRequest = likeRequest(photoId: photos[index].id) else {
+            print("ImagesListService changeLike urlRequest nil")
+            return
+        }
+        urlRequest.httpMethod = photos[index].isLiked ? "DELETE" : "POST"
+        
+        let task = URLSession.shared.objectTask(for: urlRequest) { [weak self] (result: Result<LikeResult,Error>) in
+            guard let self = self else {
+                print("ImagesListService changeLike URLSession.shared.objectTask self: nil")
+                completion(.failure(NetworkError.invalidRequest))
+                return
+            }
+            
+            switch result {
+            case .success(let response):
+                print("ImagesListService changeLike result success: \(response)")
+                DispatchQueue.main.async {
+                    completion(.success(response.photo.likedByUser))
+                    self.photos[index].isLiked = response.photo.likedByUser
+                }
+            case .failure(let error):
+                print("ImagesListService changeLike result failure: \(error)")
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     // MARK: - Private methods
     private func photosRequest(page: Int) -> URLRequest? {
         guard let url = URL(string: Constants.defaultBaseURLString + "photos?page=\(page)"),
@@ -92,5 +121,18 @@ final class ImagesListService {
             return nil
         }
         return formatter.date(from: dateString)
+    }
+    
+    private func likeRequest(photoId: String) -> URLRequest? {
+        guard
+            let url = URL(string: Constants.defaultBaseURLString + "photos/\(photoId)/like"),
+            let token = OAuth2TokenStorage().token else {
+            print("ImagesListService postLikeRequest url nil")
+            return nil
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        print("ImagesListService photosRequest urlRequest: \(urlRequest)")
+        return urlRequest
     }
 }

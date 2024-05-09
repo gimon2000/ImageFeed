@@ -121,6 +121,8 @@ extension ImagesListViewController: UITableViewDataSource {
             }
         }
         
+        imageListCell.delegate = self
+        
         return imageListCell
     }
     
@@ -148,3 +150,28 @@ extension ImagesListViewController: UITableViewDelegate {
     }
 }
 
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLike(_ cell: ImagesListCell, completion: @escaping (Bool) -> Void) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        UIBlockingProgressHUD.show()
+        imagesListService.changeLike(index: indexPath.row) {[weak self] result in
+            
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else {
+                print("ImagesListViewController ImagesListCellDelegate self: nil")
+                return
+            }
+            
+            switch result {
+            case .success(let resultBool):
+                print("ImagesListViewController ImagesListCellDelegate success: \(resultBool)")
+                self.photos[indexPath.row].isLiked = resultBool
+                completion(resultBool)
+            case .failure(let error):
+                print("ImagesListViewController ImagesListCellDelegate failure: \(error)")
+            }
+        }
+    }
+}
