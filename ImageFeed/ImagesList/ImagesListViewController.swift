@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListViewController: UIViewController {
     
-    private let photosName: [String] = Array(0..<20).map{"\($0)"}
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
+    private var photos: [Photo] = []
+    private let imagesListService = ImagesListService.shared
+    private var imagesListServiceObserver: NSObjectProtocol?
     
     @IBOutlet private var tableView: UITableView!
     
@@ -25,39 +28,72 @@ final class ImagesListViewController: UIViewController {
         super.viewDidLoad()
         tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        
+        imagesListServiceObserver = NotificationCenter.default.addObserver(
+            forName: ImagesListService.didChangeNotification,
+            object: nil,
+            queue: .main) { [weak self] _ in
+                guard let self = self else { return }
+                print("ImagesListViewController imagesListServiceObserver")
+                self.updateTableViewAnimated()
+            }
+        imagesListService.fetchPhotosNextPage()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageSegueIdentifier {
             guard let viewController = segue.destination as? SingleImageViewController,
-                  let indexPath = sender as? IndexPath,
-                  let image = UIImage(named: photosName[indexPath.row]) else {
+                  let indexPath = sender as? IndexPath else {
                 assertionFailure("Invalid segue destination")
                 return
             }
             
-            viewController.setImage(imageView: image)
+            let stringURL = photos[indexPath.row].largeImageURL
+            
+            viewController.setStringURLImage(stringURL: stringURL)
+            
         } else {
             super.prepare(for: segue, sender: sender)
         }
     }
     
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        if indexPath.row < photosName.count {
-            let imageName = photosName[indexPath.row]
-            guard let image = UIImage(named: imageName) else {
+        if indexPath.row < photos.count {
+            guard let image = UIImage(named: "Stub") else {
                 return
             }
-            let dateString = dateFormatter.string(from: Date())
-            let isLiked = indexPath.row % 2 == 0
+            var dateString: String
+            if let date = photos[indexPath.row].createdAt {
+                dateString = dateFormatter.string(from: date)
+            } else {
+                dateString = ""
+            }
+            let isLiked = photos[indexPath.row].isLiked
             cell.configImageCell(image: image, dateString: dateString, isLiked: isLiked)
+        }
+        
+    }
+    
+    private func updateTableViewAnimated() {
+        let oldCount = photos.count
+        print("ImagesListViewController updateTableViewAnimated oldCount: \(oldCount)")
+        let newCount = imagesListService.photos.count
+        print("ImagesListViewController updateTableViewAnimated newCount: \(newCount)")
+        if oldCount != newCount {
+            photos = imagesListService.photos
+            tableView.performBatchUpdates {
+                let indexPaths = (oldCount..<newCount).map { i in
+                    IndexPath(row: i, section: 0)
+                }
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
         }
     }
 }
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photosName.count
+        return photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -69,7 +105,30 @@ extension ImagesListViewController: UITableViewDataSource {
         
         configCell(for: imageListCell, with: indexPath)
         
+        let thumbImageURL = photos[indexPath.row].thumbImageURL
+        guard
+            let url = URL(string: thumbImageURL),
+            let imageView = imageListCell.imageCell
+        else { return imageListCell }
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage( with: url ){ result in
+            switch result {
+            case .success(let result):
+                print("tableView cellForRowAt setImage success result: \(result)")
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            case .failure(let error):
+                print("tableView cellForRowAt setImage failure error: \(error)")
+            }
+        }
+        
         return imageListCell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row + 1 == photos.count {
+            print("ImagesListViewController UITableViewDataSource UITableViewCell imagesListService.fetchPhotosNextPage()")
+            imagesListService.fetchPhotosNextPage()
+        }
     }
 }
 
@@ -79,14 +138,12 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let image = UIImage(named: photosName[indexPath.row]) else {
-            return CGFloat()
-        }
+        let imageSize = photos[indexPath.row].size
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = image.size.width
+        let imageWidth = imageSize.width
         let scale = imageViewWidth / imageWidth
-        let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
+        let cellHeight = imageSize.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
 }

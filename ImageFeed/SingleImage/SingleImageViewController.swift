@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
-    private var image: UIImage?
+    private var image = UIImage(named: "StubSingle")
+    private var stringURL: String?
     
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
@@ -21,7 +23,29 @@ final class SingleImageViewController: UIViewController {
             scrollView.minimumZoomScale = 0.1
             scrollView.maximumZoomScale = 1.25
             imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
+            guard
+                let stringURL = stringURL,
+                let url = URL(string: stringURL)
+            else {
+                print("SingleImageViewController viewDidLoad image url or stringURL: nil")
+                return
+            }
+            imageView.kf.indicatorType = .activity
+            imageView.kf.setImage( with: url) { [weak self] result in
+                guard let self = self else {
+                    print("SingleImageViewController viewDidLoad imageView.kf.setImage self: nil")
+                    return
+                }
+                switch result{
+                case .success(let result):
+                    print("SingleImageViewController viewDidLoad imageView.kf.setImage success result: \(result)")
+                    let image = result.image
+                    self.image = image
+                    self.rescaleAndCenterImageInScrollView(image: image)
+                case .failure(let error):
+                    print("SingleImageViewController viewDidLoad imageView.kf.setImage failure error: \(error)")
+                }
+            }
         }
     }
     
@@ -58,8 +82,8 @@ final class SingleImageViewController: UIViewController {
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
     
-    func setImage (imageView: UIImage) {
-        image = imageView
+    func setStringURLImage(stringURL: String) {
+        self.stringURL = stringURL
     }
 }
 
