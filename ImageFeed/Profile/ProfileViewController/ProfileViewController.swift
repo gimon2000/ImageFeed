@@ -146,7 +146,38 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
+        alertExit()
+    }
+    
+    private func alertExit() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: "Да",
+            style: .default){[weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.confirmExit()
+            }
+        let action2 = UIAlertAction(
+            title: "Нет",
+            style: .default){_ in
+                alert.dismiss(animated: true)
+            }
+        alert.addAction(action)
+        alert.addAction(action2)
+        present(alert, animated: true )
+    }
+    
+    private func confirmExit() {
         ProfileLogoutService.shared.logout()
-        present(SplashViewController(), animated: true)
+        guard let window = UIApplication.shared.windows.first else {
+            fatalError("confirmExit Invalid Configuration")
+        }
+        window.rootViewController = SplashViewController()
     }
 }
