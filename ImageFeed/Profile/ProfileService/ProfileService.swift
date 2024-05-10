@@ -9,23 +9,19 @@ import Foundation
 
 final class ProfileService {
     
+    // MARK: - Public Properties
     static let shared = ProfileService()
     
-    private init() {}
-    
+    // MARK: - Private Properties
     private var task: URLSessionTask?
-    
     private(set) var profile: Profile?
     
-    private func meRequest(_ token: String) -> URLRequest? {
-        guard let url = URL(string: Constants.defaultBaseURLString + "me") else {
-            print("ProfileService meRequest url nil")
-            return nil
-        }
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        print("ProfileService meRequest urlRequest: \(urlRequest)")
-        return urlRequest
+    // MARK: - Initializers
+    private init() {}
+    
+    // MARK: - Public methods
+    func cleanProfile() {
+        profile = nil
     }
     
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
@@ -64,5 +60,17 @@ final class ProfileService {
         }
         self.task = task
         task.resume()
+    }
+    
+    // MARK: - Private Methods
+    private func meRequest(_ token: String) -> URLRequest? {
+        guard let url = URL(string: Constants.defaultBaseURLString + "me") else {
+            print("ProfileService meRequest url nil")
+            return nil
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        print("ProfileService meRequest urlRequest: \(urlRequest)")
+        return urlRequest
     }
 }

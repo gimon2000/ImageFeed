@@ -21,6 +21,10 @@ final class ImagesListService {
     private var task: URLSessionTask?
     
     // MARK: - Public methods
+    func cleanPhotos() {
+        photos = []
+    }
+    
     func fetchPhotosNextPage() {
         if task != nil { return }
         

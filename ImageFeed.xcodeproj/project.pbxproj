@@ -23,6 +23,7 @@
 		E0573E362BE95F6300258262 /* ImagesListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0573E352BE95F6300258262 /* ImagesListService.swift */; };
 		E0573E452BED02E200258262 /* ImagesListCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0573E442BED02E200258262 /* ImagesListCellDelegate.swift */; };
 		E0573E472BED107700258262 /* LikeResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0573E462BED107700258262 /* LikeResult.swift */; };
+		E0573E492BED3B3800258262 /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0573E482BED3B3800258262 /* ProfileLogoutService.swift */; };
 		E084696F2B91118500D5B87C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E084696E2B91118500D5B87C /* AppDelegate.swift */; };
 		E08469712B91118500D5B87C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08469702B91118500D5B87C /* SceneDelegate.swift */; };
 		E08469732B91118500D5B87C /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08469722B91118500D5B87C /* ImagesListViewController.swift */; };
@@ -69,6 +70,7 @@
 		E0573E3B2BEAB34E00258262 /* ImageFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0573E442BED02E200258262 /* ImagesListCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCellDelegate.swift; sourceTree = "<group>"; };
 		E0573E462BED107700258262 /* LikeResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeResult.swift; sourceTree = "<group>"; };
+		E0573E482BED3B3800258262 /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		E084696B2B91118500D5B87C /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E084696E2B91118500D5B87C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E08469702B91118500D5B87C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			children = (
 				E023450D2BD050B700CE13B2 /* ProfileService.swift */,
 				E02345142BD3A02700CE13B2 /* ProfileImageService.swift */,
+				E0573E482BED3B3800258262 /* ProfileLogoutService.swift */,
 			);
 			path = ProfileService;
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 				E0C6E6432BA74E2E00FE1048 /* SingleImageViewController.swift in Sources */,
 				E02345152BD3A02700CE13B2 /* ProfileImageService.swift in Sources */,
 				E0573E342BE95EE900258262 /* Photos.swift in Sources */,
+				E0573E492BED3B3800258262 /* ProfileLogoutService.swift in Sources */,
 				E0C6E64A2BBC92AB00FE1048 /* WebViewViewController.swift in Sources */,
 				E0573E362BE95F6300258262 /* ImagesListService.swift in Sources */,
 				E0C6E6562BC321B500FE1048 /* URLSession+data+extension.swift in Sources */,
