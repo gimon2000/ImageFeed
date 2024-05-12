@@ -1,5 +1,5 @@
 //
-//  Photos.swift
+//  Photo.swift
 //  ImageFeed
 //
 //  Created by gimon on 06.05.2024.

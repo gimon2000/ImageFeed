@@ -83,7 +83,7 @@ final class ProfileViewController: UIViewController {
             object: nil,
             queue: .main) {
                 [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.updateAvatar()
             }
         updateAvatar()
@@ -158,7 +158,7 @@ final class ProfileViewController: UIViewController {
         let action = UIAlertAction(
             title: "Да",
             style: .default){[weak self] _ in
-                guard let self = self else {
+                guard let self else {
                     return
                 }
                 self.confirmExit()

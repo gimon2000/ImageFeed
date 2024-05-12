@@ -26,7 +26,7 @@ final class ImagesListCell: UITableViewCell {
     
     @IBAction func clickLikeButton(_ sender: Any) {
         delegate?.imageListCellDidTapLike(self) {[weak self] isLiked in
-            guard let self = self else {
+            guard let self else {
                 print("ImagesListCell clickLikeButton self: nil")
                 return
             }

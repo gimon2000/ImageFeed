@@ -75,7 +75,7 @@ final class SingleImageViewController: UIViewController {
         imageView.kf.setImage( with: url ) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
-            guard let self = self else {
+            guard let self else {
                 print("SingleImageViewController viewDidLoad imageView.kf.setImage self: nil")
                 return
             }
@@ -109,7 +109,7 @@ final class SingleImageViewController: UIViewController {
         let action2 = UIAlertAction(
             title: "Повторить",
             style: .default){[weak self] _ in
-                guard let self = self else {
+                guard let self else {
                     return
                 }
                 self.setImage()

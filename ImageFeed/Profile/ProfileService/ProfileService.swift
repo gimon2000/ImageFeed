@@ -35,7 +35,7 @@ final class ProfileService {
         }
         
         let task = URLSession.shared.objectTask(for: urlRequest){[weak self] (result: Result<ProfileResult, Error>) in
-            guard let self = self else {
+            guard let self else {
                 print("ProfileService fetchProfile URLSession.shared.objectTask self: nil")
                 return
             }

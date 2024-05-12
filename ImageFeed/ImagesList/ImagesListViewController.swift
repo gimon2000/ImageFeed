@@ -33,7 +33,7 @@ final class ImagesListViewController: UIViewController {
             forName: ImagesListService.didChangeNotification,
             object: nil,
             queue: .main) { [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 print("ImagesListViewController imagesListServiceObserver")
                 self.updateTableViewAnimated()
             }
@@ -42,8 +42,9 @@ final class ImagesListViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showSingleImageSegueIdentifier {
-            guard let viewController = segue.destination as? SingleImageViewController,
-                  let indexPath = sender as? IndexPath else {
+            guard
+                let viewController = segue.destination as? SingleImageViewController,
+                let indexPath = sender as? IndexPath else {
                 assertionFailure("Invalid segue destination")
                 return
             }
@@ -159,7 +160,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
             
             UIBlockingProgressHUD.dismiss()
             
-            guard let self = self else {
+            guard let self else {
                 print("ImagesListViewController ImagesListCellDelegate self: nil")
                 return
             }

@@ -36,7 +36,7 @@ final class ImagesListService {
         }
         
         let task = URLSession.shared.objectTask(for: urlRequest) { [weak self] (result: Result<[PhotoResult],Error>) in
-            guard let self = self else {
+            guard let self else {
                 print("ImagesListService fetchPhotosNextPage URLSession.shared.objectTask self: nil")
                 return
             }
@@ -84,7 +84,7 @@ final class ImagesListService {
         urlRequest.httpMethod = photos[index].isLiked ? "DELETE" : "POST"
         
         let task = URLSession.shared.objectTask(for: urlRequest) { [weak self] (result: Result<LikeResult,Error>) in
-            guard let self = self else {
+            guard let self else {
                 print("ImagesListService changeLike URLSession.shared.objectTask self: nil")
                 completion(.failure(NetworkError.invalidRequest))
                 return
