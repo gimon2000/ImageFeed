@@ -9,10 +9,14 @@ import UIKit
 
 final class AuthViewController: UIViewController {
     
-    private let identifierShowWebView = "ShowWebView"
-    private let oAuth2Service = OAuth2Service.shared
+    // MARK: Public Properties
     weak var delegate: AuthViewControllerDelegate?
     
+    // MARK: Private Properties
+    private let identifierShowWebView = "ShowWebView"
+    private let oAuth2Service = OAuth2Service.shared
+    
+    // MARK: Override Public Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,12 +29,16 @@ final class AuthViewController: UIViewController {
                 fatalError("Failed to prepare for \(identifierShowWebView)")
             }
             print("AuthViewController prepare segue.identifier: \(identifierShowWebView)")
+            let webViewPresenter = WebViewPresenter()
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
             webViewViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
         }
     }
     
+    // MARK: Private Methods
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
@@ -40,6 +48,7 @@ final class AuthViewController: UIViewController {
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
+    // MARK: Public Methods
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         print("AuthViewController webViewViewController")
         
@@ -48,6 +57,11 @@ extension AuthViewController: WebViewViewControllerDelegate {
         fetchOAuthToken(code, vc: vc)
     }
     
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        dismiss(animated: true)
+    }
+    
+    // MARK: Private Methods
     private func fetchOAuthToken(_ code: String, vc: WebViewViewController) {
         oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self else {
@@ -67,9 +81,5 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 break
             }
         }
-    }
-    
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        dismiss(animated: true)
     }
 }
