@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
-    private var image: UIImage?
+    private var stringURL: String?
     
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
@@ -17,12 +18,14 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let image = image {
-            scrollView.minimumZoomScale = 0.1
-            scrollView.maximumZoomScale = 1.25
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+        
+        setImage()
+    }
+    
+    func setStringURLImage(stringURL: String) {
+        self.stringURL = stringURL
     }
     
     @IBAction private func didClickBackButton(_ sender: Any) {
@@ -30,7 +33,7 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction private func didClickShareButton(_ sender: Any) {
-        guard let image = image else {
+        guard let image = imageView.image else {
             return
         }
         let activity = UIActivityViewController(
@@ -58,8 +61,62 @@ final class SingleImageViewController: UIViewController {
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
     
-    func setImage (imageView: UIImage) {
-        image = imageView
+    private func setImage() {
+        guard
+            let stringURL = stringURL,
+            let url = URL(string: stringURL)
+        else {
+            print("SingleImageViewController viewDidLoad image url or stringURL: nil")
+            self.showError()
+            return
+        }
+        UIBlockingProgressHUD.show()
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage( with: url ) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self else {
+                print("SingleImageViewController viewDidLoad imageView.kf.setImage self: nil")
+                return
+            }
+            switch result{
+            case .success(let result):
+                print("SingleImageViewController viewDidLoad imageView.kf.setImage success result: \(result)")
+                let image = result.image
+                self.rescaleAndCenterImageInScrollView(image: image)
+            case .failure(let error):
+                print("SingleImageViewController viewDidLoad imageView.kf.setImage failure error: \(error)")
+                
+                if let stub = UIImage(named: "StubSingle") {
+                    self.imageView.image = stub
+                    self.rescaleAndCenterImageInScrollView(image: stub)
+                }
+                self.showError()
+            }
+        }
+    }
+    
+    private func showError() {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так.",
+            message: "Попробовать ещё раз?",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: "Не надо",
+            style: .default){ _ in alert.dismiss(animated: true)
+            }
+        let action2 = UIAlertAction(
+            title: "Повторить",
+            style: .default){[weak self] _ in
+                guard let self else {
+                    return
+                }
+                self.setImage()
+            }
+        alert.addAction(action)
+        alert.addAction(action2)
+        present(alert, animated: true )
     }
 }
 

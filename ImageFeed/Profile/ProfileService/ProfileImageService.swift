@@ -9,24 +9,21 @@ import Foundation
 
 final class ProfileImageService {
     
+    // MARK: - Public Properties
     static let shared = ProfileImageService()
     static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     
-    private init() {}
-    
+    // MARK: - Private Properties
     private (set) var avatarURL: String?
-    
     private var task: URLSessionTask?
     
-    private func userUsernameRequest(_ token: String, username: String) -> URLRequest? {
-        guard let url = URL(string: Constants.defaultBaseURLString + "users/\(username)") else {
-            print("ProfileImageService userUsernameRequest url nil")
-            return nil
-        }
-        var urlRequest = URLRequest(url: url)
-        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        print("ProfileImageService userUsernameRequest urlRequest: \(urlRequest)")
-        return urlRequest
+    // MARK: - Initializers
+    private init() {}
+    
+    // MARK: - Public methods
+    
+    func cleanAvatarURL() {
+        avatarURL = nil
     }
     
     func fetchProfileImageURL(token: String, username: String, _ completion: @escaping (Result<String?, Error>) -> Void) {
@@ -39,7 +36,7 @@ final class ProfileImageService {
         }
         
         let task = URLSession.shared.objectTask(for: urlRequest) {[weak self] (result: Result<UserResult, Error>) in
-            guard let self = self else {
+            guard let self else {
                 print("ProfileImageService fetchProfileImageURL URLSession.shared.objectTask self: nil")
                 return
             }
@@ -63,5 +60,17 @@ final class ProfileImageService {
         }
         self.task = task
         task.resume()
+    }
+    
+    // MARK: - Private Methods
+    private func userUsernameRequest(_ token: String, username: String) -> URLRequest? {
+        guard let url = URL(string: Constants.defaultBaseURLString + "users/\(username)") else {
+            print("ProfileImageService userUsernameRequest url nil")
+            return nil
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        print("ProfileImageService userUsernameRequest urlRequest: \(urlRequest)")
+        return urlRequest
     }
 }

@@ -58,7 +58,7 @@ final class OAuth2Service {
         }
         
         let task = URLSession.shared.objectTask(for: urlRequest){[weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-            guard let self = self else {
+            guard let self else {
                 print("OAuth2Service fetchOAuthToken URLSession.shared.objectTask self: nil")
                 return
             }

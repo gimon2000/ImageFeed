@@ -79,7 +79,7 @@ final class SplashViewController: UIViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true) {[weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             print("SplashViewController didAuthenticate dismiss")
             UIBlockingProgressHUD.show()
             guard let token = storage.token else { return }
@@ -92,7 +92,7 @@ extension SplashViewController {
     
     private func fetchParamProfile(_ token: String){
         profileService.fetchProfile(token){[weak self] result in
-            guard let self = self else {
+            guard let self else {
                 print("SplashViewController fetchParamProfile self: nil")
                 return
             }

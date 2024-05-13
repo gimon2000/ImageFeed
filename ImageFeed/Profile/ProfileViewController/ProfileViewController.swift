@@ -12,12 +12,13 @@ final class ProfileViewController: UIViewController {
     
     private var profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
-    private let oAuth2TokenStorage = OAuth2TokenStorage()
     
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
         let view = UIImageView()
         view.image = avatarImage
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 35
         return view
     }()
     
@@ -82,7 +83,7 @@ final class ProfileViewController: UIViewController {
             object: nil,
             queue: .main) {
                 [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.updateAvatar()
             }
         updateAvatar()
@@ -138,9 +139,6 @@ final class ProfileViewController: UIViewController {
             let avatarURLString = ProfileImageService.shared.avatarURL,
             let url = URL(string: avatarURLString)
         else { return }
-        let cache = ImageCache.default
-        cache.clearMemoryCache()
-        cache.clearDiskCache()
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
         avatarImageView.kf.setImage(
             with: url,
@@ -148,7 +146,38 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func didClickExitButton(_ sender: Any) {
-        // TODO: - Добавить логику перехода по нажатию на кнопки Exit
-        oAuth2TokenStorage.removeToken()
+        alertExit()
+    }
+    
+    private func alertExit() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: "Да",
+            style: .default){[weak self] _ in
+                guard let self else {
+                    return
+                }
+                self.confirmExit()
+            }
+        let action2 = UIAlertAction(
+            title: "Нет",
+            style: .default){_ in
+                alert.dismiss(animated: true)
+            }
+        alert.addAction(action)
+        alert.addAction(action2)
+        present(alert, animated: true )
+    }
+    
+    private func confirmExit() {
+        ProfileLogoutService.shared.logout()
+        guard let window = UIApplication.shared.windows.first else {
+            fatalError("confirmExit Invalid Configuration")
+        }
+        window.rootViewController = SplashViewController()
     }
 }
