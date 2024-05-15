@@ -40,8 +40,7 @@ final class AuthHelper: AuthHelperProtocol {
         }
     }
     
-    // MARK: Private Methods
-    private func authURL() -> URL? {
+    func authURL() -> URL? {
         guard var urlComponents = URLComponents(
             string: configuration.unsplashURLString + "/oauth/authorize"
         ) else {
