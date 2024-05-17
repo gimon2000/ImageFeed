@@ -45,5 +45,6 @@ final class ImagesListCell: UITableViewCell {
             return
         }
         likeButton.setImage(imageLike, for: UIControl.State.normal)
+        likeButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
     }
 }

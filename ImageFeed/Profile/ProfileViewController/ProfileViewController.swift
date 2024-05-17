@@ -19,6 +19,7 @@ final class ProfileViewController: UIViewController {
         view.image = avatarImage
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 35
+        view.accessibilityIdentifier = "avatar image"
         return view
     }()
     
@@ -53,6 +54,7 @@ final class ProfileViewController: UIViewController {
         }
         let view = UIButton.systemButton(with: image, target: nil, action: #selector(didClickExitButton))
         view.tintColor = .red
+        view.accessibilityIdentifier = "logout button"
         return view
     }()
     
