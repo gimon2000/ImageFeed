@@ -7,7 +7,9 @@
 
 import UIKit
 
-final class AlertPresenter {
+final class AlertPresenter: AlertPresenterProtocol {
+    
+    weak var view: ProfileViewControllerProtocol?
     
     static let alertError: UIAlertController = {
         let alert = UIAlertController(
@@ -22,4 +24,41 @@ final class AlertPresenter {
         alert.addAction(action)
         return alert
     }()
+    
+    func alertExit() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: "Да",
+            style: .default){[weak self] _ in
+                guard let self else {
+                    return
+                }
+                self.confirmExit()
+            }
+        let action2 = UIAlertAction(
+            title: "Нет",
+            style: .default){_ in
+                alert.dismiss(animated: true)
+            }
+        alert.addAction(action)
+        alert.addAction(action2)
+        guard let view = view as? ProfileViewController else {
+            print("AlertPresenter alertExit view: nil")
+            return
+        }
+        view.present(alert, animated: true )
+    }
+    
+    private func confirmExit() {
+        ProfileLogoutService.shared.logout()
+        guard let window = UIApplication.shared.windows.first else {
+            fatalError("confirmExit Invalid Configuration")
+        }
+        window.rootViewController = SplashViewController()
+    }
+    
 }
