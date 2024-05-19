@@ -56,6 +56,8 @@
 		E0CE44632BF89866003B7961 /* ImagesListViewPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE44622BF89866003B7961 /* ImagesListViewPresenterProtocol.swift */; };
 		E0CE44652BF8990A003B7961 /* ImagesListViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE44642BF8990A003B7961 /* ImagesListViewPresenter.swift */; };
 		E0CE44682BF910EF003B7961 /* ImagesListViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE44672BF910EF003B7961 /* ImagesListViewTests.swift */; };
+		E0CE446A2BF9E26B003B7961 /* ImagesListViewControllerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE44692BF9E26B003B7961 /* ImagesListViewControllerSpy.swift */; };
+		E0CE446C2BF9E5DC003B7961 /* ImagesListCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CE446B2BF9E5DC003B7961 /* ImagesListCellProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,6 +136,8 @@
 		E0CE44622BF89866003B7961 /* ImagesListViewPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewPresenterProtocol.swift; sourceTree = "<group>"; };
 		E0CE44642BF8990A003B7961 /* ImagesListViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewPresenter.swift; sourceTree = "<group>"; };
 		E0CE44672BF910EF003B7961 /* ImagesListViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewTests.swift; sourceTree = "<group>"; };
+		E0CE44692BF9E26B003B7961 /* ImagesListViewControllerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewControllerSpy.swift; sourceTree = "<group>"; };
+		E0CE446B2BF9E5DC003B7961 /* ImagesListCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCellProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,13 +272,10 @@
 		E08469A52B9E191300D5B87C /* ImagesList */ = {
 			isa = PBXGroup;
 			children = (
-				E08469722B91118500D5B87C /* ImagesListViewController.swift */,
-				E0CE44602BF897AB003B7961 /* ImagesListViewControllerProtocol.swift */,
-				E08469A32B9E18AC00D5B87C /* ImagesListCell.swift */,
-				E0573E442BED02E200258262 /* ImagesListCellDelegate.swift */,
-				E0573E352BE95F6300258262 /* ImagesListService.swift */,
-				E0CE44642BF8990A003B7961 /* ImagesListViewPresenter.swift */,
-				E0CE44622BF89866003B7961 /* ImagesListViewPresenterProtocol.swift */,
+				E0CE446D2BF9F7F5003B7961 /* ImagesListViewController */,
+				E0CE446E2BF9F814003B7961 /* ImagesListCell */,
+				E0CE44702BF9F85A003B7961 /* ImagesListService */,
+				E0CE446F2BF9F83B003B7961 /* ImagesListViewPresenter */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -361,11 +362,8 @@
 		E0C6E65F2BCA68FB00FE1048 /* WebViewViewController */ = {
 			isa = PBXGroup;
 			children = (
-				E0C6E64F2BC06AA000FE1048 /* WebViewViewControllerDelegate.swift */,
-				E0C6E6492BBC92AB00FE1048 /* WebViewViewController.swift */,
-				E0573E4C2BF2819C00258262 /* WebViewViewControllerProtocol.swift */,
-				E0573E4E2BF2854200258262 /* WebViewPresenter.swift */,
-				E0573E4A2BF280D100258262 /* WebViewPresenterProtocol.swift */,
+				E0CE44712BF9F88C003B7961 /* ViewController */,
+				E0CE44722BF9F8AE003B7961 /* Presenter */,
 			);
 			path = WebViewViewController;
 			sourceTree = "<group>";
@@ -392,8 +390,64 @@
 			isa = PBXGroup;
 			children = (
 				E0CE44672BF910EF003B7961 /* ImagesListViewTests.swift */,
+				E0CE44692BF9E26B003B7961 /* ImagesListViewControllerSpy.swift */,
 			);
 			path = ImagesListViewTests;
+			sourceTree = "<group>";
+		};
+		E0CE446D2BF9F7F5003B7961 /* ImagesListViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E08469722B91118500D5B87C /* ImagesListViewController.swift */,
+				E0CE44602BF897AB003B7961 /* ImagesListViewControllerProtocol.swift */,
+			);
+			path = ImagesListViewController;
+			sourceTree = "<group>";
+		};
+		E0CE446E2BF9F814003B7961 /* ImagesListCell */ = {
+			isa = PBXGroup;
+			children = (
+				E08469A32B9E18AC00D5B87C /* ImagesListCell.swift */,
+				E0CE446B2BF9E5DC003B7961 /* ImagesListCellProtocol.swift */,
+				E0573E442BED02E200258262 /* ImagesListCellDelegate.swift */,
+			);
+			path = ImagesListCell;
+			sourceTree = "<group>";
+		};
+		E0CE446F2BF9F83B003B7961 /* ImagesListViewPresenter */ = {
+			isa = PBXGroup;
+			children = (
+				E0CE44642BF8990A003B7961 /* ImagesListViewPresenter.swift */,
+				E0CE44622BF89866003B7961 /* ImagesListViewPresenterProtocol.swift */,
+			);
+			path = ImagesListViewPresenter;
+			sourceTree = "<group>";
+		};
+		E0CE44702BF9F85A003B7961 /* ImagesListService */ = {
+			isa = PBXGroup;
+			children = (
+				E0573E352BE95F6300258262 /* ImagesListService.swift */,
+			);
+			path = ImagesListService;
+			sourceTree = "<group>";
+		};
+		E0CE44712BF9F88C003B7961 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E0C6E6492BBC92AB00FE1048 /* WebViewViewController.swift */,
+				E0C6E64F2BC06AA000FE1048 /* WebViewViewControllerDelegate.swift */,
+				E0573E4C2BF2819C00258262 /* WebViewViewControllerProtocol.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E0CE44722BF9F8AE003B7961 /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				E0573E4E2BF2854200258262 /* WebViewPresenter.swift */,
+				E0573E4A2BF280D100258262 /* WebViewPresenterProtocol.swift */,
+			);
+			path = Presenter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -575,6 +629,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0CE44682BF910EF003B7961 /* ImagesListViewTests.swift in Sources */,
+				E0CE446A2BF9E26B003B7961 /* ImagesListViewControllerSpy.swift in Sources */,
 				E0573E5B2BF3F63C00258262 /* WebViewTests.swift in Sources */,
 				E0B1C7232BF52CAB009CEDAC /* WebViewViewControllerSpy.swift in Sources */,
 				E0573E622BF3F83D00258262 /* WebViewPresenterSpy.swift in Sources */,
@@ -618,6 +673,7 @@
 				E0573E492BED3B3800258262 /* ProfileLogoutService.swift in Sources */,
 				E0C6E64A2BBC92AB00FE1048 /* WebViewViewController.swift in Sources */,
 				E0573E362BE95F6300258262 /* ImagesListService.swift in Sources */,
+				E0CE446C2BF9E5DC003B7961 /* ImagesListCellProtocol.swift in Sources */,
 				E0C6E6562BC321B500FE1048 /* URLSession+data+extension.swift in Sources */,
 				E08469712B91118500D5B87C /* SceneDelegate.swift in Sources */,
 				E0CE44632BF89866003B7961 /* ImagesListViewPresenterProtocol.swift in Sources */,

@@ -29,7 +29,6 @@ final class WebViewTests: XCTestCase {
     
     func testPresenterCallsLoadRequest() throws {
         //given
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let viewController = WebViewViewControllerSpy()
         let webViewPresenter = WebViewPresenter(
             authHelper: AuthHelper(

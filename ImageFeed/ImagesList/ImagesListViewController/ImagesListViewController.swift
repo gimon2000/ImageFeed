@@ -11,7 +11,7 @@ import Kingfisher
 final class ImagesListViewController: UIViewController & ImagesListViewControllerProtocol {
     
     // MARK: - IBOutlet
-    @IBOutlet var tableView: UITableView!
+    @IBOutlet private var tableView: UITableView!
     
     // MARK: - Public Properties
     var presenter: ImagesListViewPresenterProtocol?
@@ -60,6 +60,24 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
             super.prepare(for: segue, sender: sender)
         }
     }
+    
+    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
+        tableView.performBatchUpdates {
+            let indexPaths = (oldCount..<newCount).map { i in
+                IndexPath(row: i, section: 0)
+            }
+            tableView.insertRows(at: indexPaths, with: .automatic)
+        } completion: { _ in }
+    }
+    
+    func configCell(
+        for cell: ImagesListCellProtocol,
+        image: UIImage,
+        dateString: String,
+        isLiked: Bool
+    ) {
+        cell.configImageCell(image: image, dateString: dateString, isLiked: isLiked)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -83,7 +101,7 @@ extension ImagesListViewController: UITableViewDataSource {
             print("ImagesListViewController UITableViewDataSource cellForRowAt presenter: nil")
             return UITableViewCell()
         }
-        presenter.configCell(for: imageListCell, with: indexPath)
+        presenter.configCell(for: imageListCell, with: indexPath.row)
         
         let thumbImageURL = presenter.photos[indexPath.row].thumbImageURL
         guard

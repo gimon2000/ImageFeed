@@ -23,19 +23,23 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
     }()
     
     // MARK: - Public Methods
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        if indexPath.row < photos.count {
+    func configCell(for cell: ImagesListCellProtocol, with index: Int) {
+        if index < photos.count {
             guard let image = UIImage(named: "Stub") else {
                 return
             }
             var dateString: String
-            if let date = photos[indexPath.row].createdAt {
+            if let date = photos[index].createdAt {
                 dateString = dateFormatter.string(from: date)
             } else {
                 dateString = ""
             }
-            let isLiked = photos[indexPath.row].isLiked
-            cell.configImageCell(image: image, dateString: dateString, isLiked: isLiked)
+            let isLiked = photos[index].isLiked
+            guard let view else {
+                print("ImagesListViewPresenter configCell view: nil")
+                return
+            }
+            view.configCell(for: cell, image: image, dateString: dateString, isLiked: isLiked)
         }
     }
     
@@ -50,12 +54,7 @@ final class ImagesListViewPresenter: ImagesListViewPresenterProtocol {
                 print("ImagesListViewPresenter updateTableViewAnimated view: nil")
                 return
             }
-            view.tableView.performBatchUpdates {
-                let indexPaths = (oldCount..<newCount).map { i in
-                    IndexPath(row: i, section: 0)
-                }
-                view.tableView.insertRows(at: indexPaths, with: .automatic)
-            } completion: { _ in }
+            view.updateTableViewAnimated(oldCount: oldCount, newCount: newCount)
         }
     }
 }
