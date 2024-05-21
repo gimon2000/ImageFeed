@@ -32,9 +32,9 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
             forName: ImagesListService.didChangeNotification,
             object: nil,
             queue: .main) { [weak self] _ in
-                guard let presenter = self?.presenter else { return }
+                guard let self else { return }
                 print("ImagesListViewController imagesListServiceObserver")
-                presenter.updateTableViewAnimated()
+                self.updateTableViewAnimated()
             }
         imagesListService.fetchPhotosNextPage()
     }
@@ -61,22 +61,17 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
         }
     }
     
-    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
+    func updateTableViewAnimated() {
+        guard let range = presenter?.updatePhotos() as? Range<Int> else {
+            print("ImagesListViewController updateTableViewAnimated range: nil")
+            return
+        }
         tableView.performBatchUpdates {
-            let indexPaths = (oldCount..<newCount).map { i in
+            let indexPaths = (range).map { i in
                 IndexPath(row: i, section: 0)
             }
             tableView.insertRows(at: indexPaths, with: .automatic)
         } completion: { _ in }
-    }
-    
-    func configCell(
-        for cell: ImagesListCellProtocol,
-        image: UIImage,
-        dateString: String,
-        isLiked: Bool
-    ) {
-        cell.configImageCell(image: image, dateString: dateString, isLiked: isLiked)
     }
 }
 
@@ -93,15 +88,18 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
         
-        guard let imageListCell = cell as? ImagesListCell else {
+        guard let imageListCell = cell as? ImagesListCell,
+              let presenter,
+              let dataCell = presenter.getDataCell(with: indexPath.row) else {
+            print("ImagesListViewController UITableViewDataSource cellForRowAt imageListCell / presenter / dataCell : nil")
             return UITableViewCell()
         }
         
-        guard let presenter else {
-            print("ImagesListViewController UITableViewDataSource cellForRowAt presenter: nil")
-            return UITableViewCell()
-        }
-        presenter.configCell(for: imageListCell, with: indexPath.row)
+        imageListCell.configImageCell(
+            image: dataCell.image,
+            dateString: dataCell.dateString,
+            isLiked: dataCell.isLiked
+        )
         
         let thumbImageURL = presenter.photos[indexPath.row].thumbImageURL
         guard

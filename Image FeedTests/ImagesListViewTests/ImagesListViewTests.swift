@@ -20,7 +20,7 @@ final class ImagesListViewTests: XCTestCase {
         isLiked: false
     )
     
-    func testNotUpdateTableView() throws {
+    func testNotUpdatePhotos() throws {
         //given
         let viewSpy = ImagesListViewControllerSpy()
         let presenter = ImagesListViewPresenter()
@@ -28,28 +28,42 @@ final class ImagesListViewTests: XCTestCase {
         presenter.view = viewSpy
         
         //when
-        presenter.updateTableViewAnimated()
+        let range = presenter.updatePhotos()
         
         //then
-        XCTAssertFalse(viewSpy.updateTableViewCalled)
+        XCTAssertNil(range)
     }
     
-    func testUpdateTableView() throws {
+    func testUpdatePhotos() throws {
         //given
         let viewSpy = ImagesListViewControllerSpy()
         let presenter = ImagesListViewPresenter()
         viewSpy.presenter = presenter
         presenter.view = viewSpy
-        presenter.photos.append(photo)
+        ImagesListService.shared.photos.append(photo)
         
         //when
-        presenter.updateTableViewAnimated()
+        let range = presenter.updatePhotos()
         
         //then
-        XCTAssertTrue(viewSpy.updateTableViewCalled)
+        XCTAssertEqual(range, 0..<1)
     }
     
-    func testConfigCell() throws {
+    func testGetDataCellNil() throws {
+        //given
+        let viewSpy = ImagesListViewControllerSpy()
+        let presenter = ImagesListViewPresenter()
+        viewSpy.presenter = presenter
+        presenter.view = viewSpy
+        
+        //when
+        let dataCell = presenter.getDataCell(with: 0)
+        
+        //then
+        XCTAssertNil(dataCell)
+    }
+    
+    func testGetDataCell() throws {
         //given
         let viewSpy = ImagesListViewControllerSpy()
         let presenter = ImagesListViewPresenter()
@@ -60,9 +74,12 @@ final class ImagesListViewTests: XCTestCase {
         presenter.photos.append(photo)
         
         //when
-        presenter.configCell(for: ImagesListCell(), with: 0)
+        guard let dataCell = presenter.getDataCell(with: 0) else {
+            XCTAssert(true)
+            return
+        }
         
         //then
-        XCTAssertTrue(viewSpy.configCellCalled)
+        XCTAssertFalse(dataCell.isLiked)
     }
 }

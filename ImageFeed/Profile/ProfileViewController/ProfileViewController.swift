@@ -177,4 +177,13 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         }
         alertPresenter.alertExit()
     }
+    
+    func confirmExit() {
+        ProfileLogoutService.shared.logout()
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("confirmExit Invalid Configuration")
+            return
+        }
+        window.rootViewController = SplashViewController()
+    }
 }

@@ -49,6 +49,8 @@ final class Image_FeedUITests: XCTestCase {
     }
     
     func testFeed() throws {
+        sleep(2)
+        
         let tablesQuery = app.tables
         let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
         

@@ -9,4 +9,5 @@ import Foundation
 
 public protocol ProfileViewControllerProtocol: AnyObject {
     var alertPresenter: AlertPresenterProtocol? { get set }
+    func confirmExit()
 }

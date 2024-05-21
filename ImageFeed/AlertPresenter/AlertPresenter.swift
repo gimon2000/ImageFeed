@@ -34,10 +34,10 @@ final class AlertPresenter: AlertPresenterProtocol {
         let action = UIAlertAction(
             title: "Да",
             style: .default){[weak self] _ in
-                guard let self else {
+                guard let view = self?.view else {
                     return
                 }
-                self.confirmExit()
+                view.confirmExit()
             }
         let action2 = UIAlertAction(
             title: "Нет",
@@ -52,13 +52,4 @@ final class AlertPresenter: AlertPresenterProtocol {
         }
         view.present(alert, animated: true )
     }
-    
-    private func confirmExit() {
-        ProfileLogoutService.shared.logout()
-        guard let window = UIApplication.shared.windows.first else {
-            fatalError("confirmExit Invalid Configuration")
-        }
-        window.rootViewController = SplashViewController()
-    }
-    
 }

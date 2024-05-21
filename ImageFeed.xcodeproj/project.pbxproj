@@ -42,6 +42,7 @@
 		E09A694D2BFA0A3700A97061 /* AlertPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A694C2BFA0A3700A97061 /* AlertPresenterProtocol.swift */; };
 		E09A69502BFA123800A97061 /* ProfileViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A694F2BFA123800A97061 /* ProfileViewControllerTests.swift */; };
 		E09A69522BFA127800A97061 /* AlertPresenterSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A69512BFA127800A97061 /* AlertPresenterSpy.swift */; };
+		E09A69542BFBDC1A00A97061 /* DataTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09A69532BFBDC1A00A97061 /* DataTableCell.swift */; };
 		E0B1C7232BF52CAB009CEDAC /* WebViewViewControllerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B1C7222BF52CAB009CEDAC /* WebViewViewControllerSpy.swift */; };
 		E0B1C72C2BF546BC009CEDAC /* Image_FeedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B1C72B2BF546BC009CEDAC /* Image_FeedUITests.swift */; };
 		E0C6E63F2BA4CC3A00FE1048 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C6E63E2BA4CC3A00FE1048 /* ProfileViewController.swift */; };
@@ -125,6 +126,7 @@
 		E09A694C2BFA0A3700A97061 /* AlertPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenterProtocol.swift; sourceTree = "<group>"; };
 		E09A694F2BFA123800A97061 /* ProfileViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewControllerTests.swift; sourceTree = "<group>"; };
 		E09A69512BFA127800A97061 /* AlertPresenterSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenterSpy.swift; sourceTree = "<group>"; };
+		E09A69532BFBDC1A00A97061 /* DataTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTableCell.swift; sourceTree = "<group>"; };
 		E0B1C7222BF52CAB009CEDAC /* WebViewViewControllerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewControllerSpy.swift; sourceTree = "<group>"; };
 		E0B1C7292BF546BC009CEDAC /* Image FeedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Image FeedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0B1C72B2BF546BC009CEDAC /* Image_FeedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image_FeedUITests.swift; sourceTree = "<group>"; };
@@ -367,6 +369,7 @@
 				E0573E312BE95E1500258262 /* PhotoResult.swift */,
 				E0573E332BE95EE900258262 /* Photo.swift */,
 				E0573E462BED107700258262 /* LikeResult.swift */,
+				E09A69532BFBDC1A00A97061 /* DataTableCell.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -690,6 +693,7 @@
 				E0C6E6452BB7F01200FE1048 /* AuthConfiguration.swift in Sources */,
 				E023451A2BDD7C3B00CE13B2 /* AlertPresenter.swift in Sources */,
 				E0C6E6432BA74E2E00FE1048 /* SingleImageViewController.swift in Sources */,
+				E09A69542BFBDC1A00A97061 /* DataTableCell.swift in Sources */,
 				E02345152BD3A02700CE13B2 /* ProfileImageService.swift in Sources */,
 				E0573E342BE95EE900258262 /* Photo.swift in Sources */,
 				E0573E4B2BF280D100258262 /* WebViewPresenterProtocol.swift in Sources */,
