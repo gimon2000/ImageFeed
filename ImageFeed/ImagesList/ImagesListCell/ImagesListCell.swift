@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-final class ImagesListCell: UITableViewCell {
+final class ImagesListCell: UITableViewCell & ImagesListCellProtocol {
     static let reuseIdentifier = "ImagesListCell"
     
     weak var delegate: ImagesListCellDelegate?
@@ -45,5 +45,6 @@ final class ImagesListCell: UITableViewCell {
             return
         }
         likeButton.setImage(imageLike, for: UIControl.State.normal)
+        likeButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
     }
 }

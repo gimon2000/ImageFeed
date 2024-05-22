@@ -8,17 +8,33 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController & ProfileViewControllerProtocol {
     
+    // MARK: - Public Properties
+    var alertPresenter: AlertPresenterProtocol?
+    
+    // MARK: - Private Properties
     private var profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    // MARK: - Initializers
+    init(alertPresenter: AlertPresenterProtocol) {
+        self.alertPresenter = alertPresenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("ProfileViewController init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Visual Components
     private let avatarImageView: UIImageView = {
         let avatarImage = UIImage(named: "Photo")
         let view = UIImageView()
         view.image = avatarImage
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 35
+        view.accessibilityIdentifier = "avatar image"
         return view
     }()
     
@@ -53,11 +69,19 @@ final class ProfileViewController: UIViewController {
         }
         let view = UIButton.systemButton(with: image, target: nil, action: #selector(didClickExitButton))
         view.tintColor = .red
+        view.accessibilityIdentifier = "logout button"
         return view
     }()
     
+    // MARK: - Public Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard var alertPresenter else {
+            print("ProfileViewController viewDidLoad alertPresenter: nil")
+            return
+        }
+        alertPresenter.view = self
         
         view.backgroundColor = .ypBlack
         if let profile = profileService.profile {
@@ -89,6 +113,7 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
+    // MARK: - Private Methods
     private func addConstraintImageAvatar(){
         NSLayoutConstraint.activate([
             avatarImageView.widthAnchor.constraint(equalToConstant: 70),
@@ -145,38 +170,19 @@ final class ProfileViewController: UIViewController {
             options: [.processor(processor)])
     }
     
-    @objc private func didClickExitButton(_ sender: Any) {
-        alertExit()
+    @objc func didClickExitButton(_ sender: Any) {
+        guard let alertPresenter else {
+            print("ProfileViewController didClickExitButton alertPresenter: nil")
+            return
+        }
+        alertPresenter.alertExit()
     }
     
-    private func alertExit() {
-        let alert = UIAlertController(
-            title: "Пока, пока!",
-            message: "Уверены что хотите выйти?",
-            preferredStyle: .alert
-        )
-        let action = UIAlertAction(
-            title: "Да",
-            style: .default){[weak self] _ in
-                guard let self else {
-                    return
-                }
-                self.confirmExit()
-            }
-        let action2 = UIAlertAction(
-            title: "Нет",
-            style: .default){_ in
-                alert.dismiss(animated: true)
-            }
-        alert.addAction(action)
-        alert.addAction(action2)
-        present(alert, animated: true )
-    }
-    
-    private func confirmExit() {
+    func confirmExit() {
         ProfileLogoutService.shared.logout()
         guard let window = UIApplication.shared.windows.first else {
-            fatalError("confirmExit Invalid Configuration")
+            assertionFailure("confirmExit Invalid Configuration")
+            return
         }
         window.rootViewController = SplashViewController()
     }
